@@ -13,12 +13,26 @@ const getState = ({ getStore, getActions, setStore }) => {
 					background: "white",
 					initial: "white"
 				}
-			]
+			],
+			api_return: {}
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
+			},
+
+			callAPI: () => {
+				const opts = {
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': 'Bearer BQAEMjzHv7CbjA_iNr63wCagXgUBflsdSULEPDc4z8OJxdDXlSBLc9Gb8LPyhov2YLTv_LydpoKWWfec7GeTjTkZ4Q-tox7eSMuI27v1BK97CYFkLvQ'
+					},
+				}
+				fetch("https://api.spotify.com/v1/search?q=Sleepy%20Hollow&type=track&market=US", opts)
+				.then(resp => {if(resp.ok) resp.json()})
+				.then(data => setStore({api_return: data.tracks}))
 			},
 
 			getMessage: async () => {

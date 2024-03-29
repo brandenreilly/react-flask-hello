@@ -20,3 +20,18 @@ def handle_hello():
     }
 
     return jsonify(response_body), 200
+
+@api.route('createuser', methods=['POST'])
+def handle_create_user():
+    sent = request.json
+    check_user = User.query.filter_by(username=sent['username']).first()
+    check_email = User.query.filter_by(email=sent['email']).first()
+    if check_user or check_email:
+        return 'Account already exists with this username or email.', 409
+    else:
+        new_user = User(username=sent['username'], first_name=sent['first_name'], last_name=sent['last_name'], email=sent['email'], password=sent['password'], postal_code=sent['postal_code'])
+        db.session.add(new_user)
+        db.session.commit()
+        query_user = User.query.filter_by(username=sent['username']).first()
+        serailize_user = query_user.serialize()
+        return jsonify(serailize_user), 200
